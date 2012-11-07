@@ -23,7 +23,7 @@ public function rdfexport_add_settings_page( ) {
 public function rdfexport_page( ) {
 ?>
 <div class="wrap">
-<form method="post" id="rdfexport_form">
+<form method="get" id="rdfexport_form">
   <input type="hidden" name="rdfdownload" value="true">
   <h3>RDF Export</h3>
   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo, nunc eu suscipit egestas, risus lectus pellentesque leo, ac pretium eros eros id turpis. Sed purus turpis, varius non tempor eget, tristique vitae risus. Sed dui enim, mattis vitae pulvinar vel, aliquam nec neque. Curabitur feugiat cursus arcu, vel molestie mi dignissim id. Nullam auctor tincidunt purus quis auctor.</p>

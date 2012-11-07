@@ -6,10 +6,10 @@
 
 if( isset( $_GET['rdfdownload'] ) ) {
    rdf_export( );
+   exit;
 }
 
 function rdf_export( ) {
-
 
    $sitename = sanitize_key( get_bloginfo( 'name' ) );
    if ( ! empty($sitename) ) $sitename .= '.';
@@ -18,9 +18,35 @@ function rdf_export( ) {
    header( 'Content-Description: File Transfer' );
    header( 'Content-Disposition: attachment; filename=' . $filename );
    header( 'Content-Type: text/xml; charset=' . get_option( 'blog_charset' ), true );
+
+   rdf_header( );
+
+   global $post;
+   $args = array( 'numberposts' => 10 );
+   $posts = get_posts( $args );
+   foreach( $posts as $post ) {
+      /* setup_postdata( $post ); */
+      process_post( $post );
+   }
+   wp_reset_postdata( );
+   rdf_footer( );
+}
+
+function rdf_header( ) {
 ?>
 <!-- Set up namespaces: it isn't necessary to reference an actual XSD schema to validate the RDF-use the "xmlns" value only to establish a unique namespace-->
 <rdf:RDF>
+<?php
+}
+
+function rdf_footer( ) {
+?>
+</rdf:RDF>
+<?php
+}
+
+function process_post( $post ) {
+?>
    <!-- main link to object URI (must remain stable) -->
    <branch:object rdf:about="http://www.branchcollective.org/?ps_articles=peter-logan-on-culture-edward-b-tylors-primitive-culture-1871">
 
@@ -63,8 +89,6 @@ function rdf_export( ) {
       <collex:thumbnail rdf:resource="http://www.branchcollective.org/wp-content/uploads/2012/01/Edward_Burnett_Tylor.jpg"/>
 
    </branch:object>
-</rdf:RDF>
 <?php
 }
-
 ?>
