@@ -149,14 +149,17 @@ function rdf_collex_date_contents( $my_post, $indent ) {
    $tag = "collex:date";
    rdf_open_tag( $tag, $indent );
    rdf_newline( );
-   /* rdf_date_label_contents( $my_post, $indent + 1 ); */
+   rdf_date_label_contents( $my_post, $indent + 1 );
    rdf_date_value_contents( $my_post, $indent + 1 );
    rdf_close_tag( $tag, $indent );
 }
 
 function rdf_date_label_contents( $my_post, $indent ) {
    $tag = "rdfs:label";
+   $datebits = preg_split( "/-/", $my_post->post_modified );
+   $longdate = date( "F jS, Y", mktime( 0, 0, 0, intval( $datebits[ 1 ] ), intval( $datebits[ 2 ] ), intval( $datebits[ 0 ] ) ) );
    rdf_open_tag( $tag, $indent );
+   echo $longdate;
    rdf_close_tag( $tag, 0 );
 }
 
