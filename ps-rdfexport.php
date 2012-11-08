@@ -139,12 +139,12 @@ function rdf_dc_date_contents( $my_post, $indent ) {
    $tag = "dc:date";
    rdf_open_tag( $tag, $indent );
    rdf_newline( );
-   rdf_colex_date_contents( $my_post, $indent + 1 );
+   rdf_collex_date_contents( $my_post, $indent + 1 );
    rdf_close_tag( $tag, $indent );
 }
 
-function rdf_colex_date_contents( $my_post, $indent ) {
-   $tag = "colex:date";
+function rdf_collex_date_contents( $my_post, $indent ) {
+   $tag = "collex:date";
    rdf_open_tag( $tag, $indent );
    rdf_newline( );
    /* rdf_date_label_contents( $my_post, $indent + 1 ); */
@@ -177,7 +177,7 @@ function rdf_genre_contents( $my_post, $indent ) {
 }
 
 function rdf_discipline_contents( $my_post, $indent ) {
-   $tag = "colex:discipline";
+   $tag = "collex:discipline";
    rdf_open_tag( $tag, $indent );
    echo "History";
    rdf_close_tag( $tag, 0 );
@@ -211,7 +211,14 @@ function rdf_thumbnail_contents( $my_post, $indent ) {
 
 function rdf_header_contents( ) {
    $tag = "rdf:RDF";
-   rdf_open_tag( $tag, 0 );
+   $embed = "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n" .
+"         xmlns:role=\"http://www.loc.gov/loc.terms/relators/\"\n" .
+"         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" .
+"         xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n" .
+"         xmlns:dcterms=\"http://purl.org/dc/terms/\"\n" .
+"         xmlns:collex=\"http://www.collex.org/schema#\"\n" .
+"         xmlns:branch=\"http://www.collex.org/recreate_schema#\"";
+   rdf_open_tag( $tag, 0, $embed );
    rdf_newline( );
 }
 
