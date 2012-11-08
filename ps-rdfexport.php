@@ -30,8 +30,7 @@ function rdf_export( ) {
    if ( $query->have_posts( ) ) {
       $all_posts = $query->get_posts( );
       foreach( $all_posts as $my_post ) {
-      /* $query->next_post( ); */
-      rdf_object_contents( $my_post );
+         rdf_object_contents( $my_post );
       }
    }
 
@@ -87,11 +86,10 @@ function process_post( $my_post ) {
 }
 
 function rdf_object_contents( $my_post ) {
-   $tag = "branch:object";
+   
    $indent = 1;
-   rdf_open_tag( $tag, $indent );
-   echo $my_post->guid;
-   rdf_newline( );
+   rdf_open_object_tag( $my_post, $indent );
+
    $indent = 2;
    rdf_archive_contents( $my_post, $indent );
    rdf_federation_contents( $my_post, $indent );
@@ -107,7 +105,21 @@ function rdf_object_contents( $my_post ) {
    rdf_type_contents( $my_post, $indent );
    rdf_text_contents( $my_post, $indent );
    rdf_thumbnail_contents( $my_post, $indent );
+
    $indent = 1;
+   rdf_close_object_tag( $indent );
+}
+
+function rdf_open_object_tag( $my_post, $indent ) {
+   $tag = "branch:object";
+   $embed = "rdf:about=" . "\"" . rdf_permalink( $my_post ) . "\"";
+   rdf_open_tag( $tag, $indent, $embed );
+   rdf_newline( );
+}
+
+
+function rdf_close_object_tag( $indent ) {
+   $tag = "branch:object";
    rdf_close_tag( $tag, $indent );
 }
 
@@ -127,8 +139,8 @@ function rdf_federation_contents( $my_post, $indent ) {
 
 function rdf_see_also_contents( $my_post, $indent ) {
    $tag = "rdfs:seeAlso";
-   rdf_open_tag( $tag, $indent );
-   echo $my_post->guid;
+   $embed = "rdf:resource=" . "\"" . rdf_permalink( $my_post ) . "\"";
+   rdf_open_tag( $tag, $indent, $embed );
    rdf_close_tag( $tag, 0 );
 }
 
@@ -143,14 +155,17 @@ function rdf_author_contents( $my_post, $indent ) {
    $tag = "role:AUT";
    rdf_open_tag( $tag, $indent );
    $arr = preg_split( "/,/", $my_post->post_title );
-   echo $arr[ 0 ];
+   $name = preg_split( "/ /", $arr[ 0 ] );
+   $author = $name[ 1 ] . ", " . $name[ 0 ];
+   echo $author;
    rdf_close_tag( $tag, 0 );
 }
 
 function rdf_editor_contents( $my_post, $indent ) {
    $tag = "role:EDT";
    rdf_open_tag( $tag, $indent );
-   echo the_author_meta( "user_nicename", $my_post->post_author );
+   $editor = get_the_author_meta( "last_name", $my_post->post_author ) . ", " . get_the_author_meta( "first_name", $my_post->post_author );
+   echo $editor;
    rdf_close_tag( $tag, 0 );
 }
 
@@ -192,8 +207,9 @@ function rdf_date_label_contents( $my_post, $indent ) {
 
 function rdf_date_value_contents( $my_post, $indent ) {
    $tag = "rdf:value";
+   $datebits = preg_split( "/ /", $my_post->post_modified );
    rdf_open_tag( $tag, $indent );
-   echo $my_post->post_modified;
+   echo $datebits[ 0 ];
    rdf_close_tag( $tag, 0 );
 }
 
@@ -223,23 +239,21 @@ function rdf_type_contents( $my_post, $indent ) {
 
 function rdf_text_contents( $my_post, $indent ) {
    $tag = "collex:text";
-   rdf_open_tag( $tag, $indent );
-   echo $my_post->guid;
+   $embed = "rdf:resource=" . "\"" . rdf_permalink( $my_post ) . "\"";
+   rdf_open_tag( $tag, $indent, $embed );
    rdf_close_tag( $tag, 0 );
 }
 
 function rdf_thumbnail_contents( $my_post, $indent ) {
    $tag = "collex:thumbnail";
-   rdf_open_tag( $tag, $indent );
 
    $thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $my_post->ID ), 'thumbnail' );
    $thumbURL = $thumb[ '0' ];
-   if( empty( $thumbURL ) ) {
-      $thumbURL = "bla bla bla";
+   if( empty( $thumbURL ) == false ) {
+      $embed = "rdf:resource=" . "\"" . $thumbURL . "\"";
+      rdf_open_tag( $tag, $indent, $embed );
+      rdf_close_tag( $tag, 0 );
    }
-
-   echo $thumbURL;
-   rdf_close_tag( $tag, 0 );
 }
 
 function rdf_header_contents( ) {
@@ -253,15 +267,24 @@ function rdf_footer_contents( ) {
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_open_tag( $name, $indent ) {
+function rdf_open_tag( $name, $indent, $embed = "" ) {
   $indent_str = str_repeat( "   ", $indent );
-  echo "$indent_str<$name>";
+  if( empty( $embed ) ) {
+     echo "$indent_str<$name>";
+  } else {
+     echo "$indent_str<$name $embed>";
+  }
 }
 
 function rdf_close_tag( $name, $indent ) {
   $indent_str = str_repeat( "   ", $indent );
   echo "$indent_str</$name>";
   rdf_newline( );
+}
+
+function rdf_permalink( $my_post ) {
+   $permalink = site_url( ) . "?ps_articles=" . $my_post->post_name;
+   return( $permalink );
 }
 
 function rdf_newline( ) {
