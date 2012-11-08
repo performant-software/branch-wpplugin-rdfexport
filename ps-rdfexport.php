@@ -108,8 +108,10 @@ function rdf_author_contents( $my_post, $indent ) {
    $tag = "role:AUT";
    rdf_open_tag( $tag, $indent );
    $arr = preg_split( "/,/", $my_post->post_title );
-   $name = preg_split( "/ /", $arr[ 0 ] );
-   $author = $name[ 1 ] . ", " . $name[ 0 ];
+   $fullname_arr = preg_split( "/ /", $arr[ 0 ] );
+   $lastname = $fullname_arr[ count( $fullname_arr ) - 1 ];
+   $restofname = join( " ", array_slice( $fullname_arr, 0, -1, true ) );
+   $author = $lastname . ", " . $restofname;
    echo $author;
    rdf_close_tag( $tag, 0 );
 }
@@ -210,14 +212,15 @@ function rdf_thumbnail_contents( $my_post, $indent ) {
 }
 
 function rdf_header_contents( ) {
+   echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
    $tag = "rdf:RDF";
-   $embed = "xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n" .
+   $embed = "xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" .
+"         xmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"\n" .
 "         xmlns:role=\"http://www.loc.gov/loc.terms/relators/\"\n" .
-"         xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n" .
 "         xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n" .
 "         xmlns:dcterms=\"http://purl.org/dc/terms/\"\n" .
 "         xmlns:collex=\"http://www.collex.org/schema#\"\n" .
-"         xmlns:branch=\"http://www.collex.org/recreate_schema#\"";
+"         xmlns:branch=\"http://www.collex.org/fakeschema#\"";
    rdf_open_tag( $tag, 0, $embed );
    rdf_newline( );
 }
