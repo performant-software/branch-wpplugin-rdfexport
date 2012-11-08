@@ -23,22 +23,23 @@ function rdf_export( ) {
 
    rdf_header_contents( );
 
-   /* global $post; */
+   /* global $my_post; */
    $qargs = array( 'post_type' => 'ps_articles',
                    'posts_per_page' => -1 );
    $query= new WP_Query( $qargs );
-   while ( $query->have_posts( ) ) {
-      $query->the_post( );
-      $post = $query->post;
+   if ( $query->have_posts( ) ) {
+      $all_posts = $query->get_posts( );
+      foreach( $all_posts as $my_post ) {
       /* $query->next_post( ); */
-      rdf_object_contents( $post );
+      rdf_object_contents( $my_post );
+      }
    }
 
    wp_reset_postdata( );
    rdf_footer_contents( );
 }
 
-function process_post( $post ) {
+function process_post( $my_post ) {
 ?>
    <!-- main link to object URI (must remain stable) -->
    <branch:object rdf:about="http://www.branchcollective.org/?ps_articles=peter-logan-on-culture-edward-b-tylors-primitive-culture-1871">
@@ -85,117 +86,118 @@ function process_post( $post ) {
 <?php
 }
 
-function rdf_object_contents( $post ) {
+function rdf_object_contents( $my_post ) {
    $tag = "branch:object";
    $indent = 1;
    rdf_open_tag( $tag, $indent );
+   echo $my_post->guid;
    rdf_newline( );
    $indent = 2;
-   rdf_archive_contents( $post, $indent );
-   rdf_federation_contents( $post, $indent );
-   rdf_see_also_contents( $post, $indent );
-   rdf_title_contents( $post, $indent );
-   rdf_author_contents( $post, $indent );
-   rdf_editor_contents( $post, $indent );
-   rdf_publisher_contents( $post, $indent );
-   rdf_translator_contents( $post, $indent );
-   rdf_dc_date_contents( $post, $indent );
-   rdf_genre_contents( $post, $indent );
-   rdf_discipline_contents( $post, $indent );
-   rdf_type_contents( $post, $indent );
-   rdf_text_contents( $post, $indent );
-   rdf_thumbnail_contents( $post, $indent );
+   rdf_archive_contents( $my_post, $indent );
+   rdf_federation_contents( $my_post, $indent );
+   rdf_see_also_contents( $my_post, $indent );
+   rdf_title_contents( $my_post, $indent );
+   rdf_author_contents( $my_post, $indent );
+   rdf_editor_contents( $my_post, $indent );
+   rdf_publisher_contents( $my_post, $indent );
+   rdf_translator_contents( $my_post, $indent );
+   rdf_dc_date_contents( $my_post, $indent );
+   rdf_genre_contents( $my_post, $indent );
+   rdf_discipline_contents( $my_post, $indent );
+   rdf_type_contents( $my_post, $indent );
+   rdf_text_contents( $my_post, $indent );
+   rdf_thumbnail_contents( $my_post, $indent );
    $indent = 1;
    rdf_close_tag( $tag, $indent );
 }
 
-function rdf_archive_contents( $post, $indent ) {
+function rdf_archive_contents( $my_post, $indent ) {
    $tag = "collex:archive";
    rdf_open_tag( $tag, $indent );
    echo "branch";
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_federation_contents( $post, $indent ) {
+function rdf_federation_contents( $my_post, $indent ) {
    $tag = "collex:federation";
    rdf_open_tag( $tag, $indent );
    echo "NINES";
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_see_also_contents( $post, $indent ) {
+function rdf_see_also_contents( $my_post, $indent ) {
    $tag = "rdfs:seeAlso";
    rdf_open_tag( $tag, $indent );
-   echo "XXX SEE ALSO XXX";
+   echo $my_post->guid;
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_title_contents( $post, $indent ) {
+function rdf_title_contents( $my_post, $indent ) {
    $tag = "dc:title";
    rdf_open_tag( $tag, $indent );
-   echo $post["post_title"];
+   echo $my_post->post_title;
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_author_contents( $post, $indent ) {
+function rdf_author_contents( $my_post, $indent ) {
    $tag = "role:AUT";
    rdf_open_tag( $tag, $indent );
-   echo "XXX ROLE AUT XXX";
+   $arr = preg_split( "/,/", $my_post->post_title );
+   echo $arr[ 0 ];
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_editor_contents( $post, $indent ) {
+function rdf_editor_contents( $my_post, $indent ) {
    $tag = "role:EDT";
    rdf_open_tag( $tag, $indent );
-   echo "XXX ROLE EDT XXX";
+   echo the_author_meta( "user_nicename", $my_post->post_author );
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_publisher_contents( $post, $indent ) {
+function rdf_publisher_contents( $my_post, $indent ) {
    $tag = "role:PBL";
    rdf_open_tag( $tag, $indent );
    echo "RaVoN";
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_translator_contents( $post, $indent ) {
+function rdf_translator_contents( $my_post, $indent ) {
    $tag = "role:TRL";
    rdf_open_tag( $tag, $indent );
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_dc_date_contents( $post, $indent ) {
+function rdf_dc_date_contents( $my_post, $indent ) {
    $tag = "dc:date";
    rdf_open_tag( $tag, $indent );
    rdf_newline( );
-   rdf_colex_date_contents( $post, $indent + 1 );
+   rdf_colex_date_contents( $my_post, $indent + 1 );
    rdf_close_tag( $tag, $indent );
 }
 
-function rdf_colex_date_contents( $post, $indent ) {
+function rdf_colex_date_contents( $my_post, $indent ) {
    $tag = "colex:date";
    rdf_open_tag( $tag, $indent );
    rdf_newline( );
-   rdf_date_label_contents( $post, $indent + 1 );
-   rdf_date_value_contents( $post, $indent + 1 );
+   /* rdf_date_label_contents( $my_post, $indent + 1 ); */
+   rdf_date_value_contents( $my_post, $indent + 1 );
    rdf_close_tag( $tag, $indent );
 }
 
-function rdf_date_label_contents( $post, $indent ) {
+function rdf_date_label_contents( $my_post, $indent ) {
    $tag = "rdfs:label";
    rdf_open_tag( $tag, $indent );
-   echo "XXX DATE LABEL XXX";
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_date_value_contents( $post, $indent ) {
+function rdf_date_value_contents( $my_post, $indent ) {
    $tag = "rdf:value";
    rdf_open_tag( $tag, $indent );
-   echo "XXX DATE VALUE XXX";
+   echo $my_post->post_modified;
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_genre_contents( $post, $indent ) {
+function rdf_genre_contents( $my_post, $indent ) {
    $tag = "collex:genre";
    rdf_open_tag( $tag, $indent );
    echo "Criticism";
@@ -205,31 +207,38 @@ function rdf_genre_contents( $post, $indent ) {
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_discipline_contents( $post, $indent ) {
+function rdf_discipline_contents( $my_post, $indent ) {
    $tag = "colex:discipline";
    rdf_open_tag( $tag, $indent );
    echo "History";
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_type_contents( $post, $indent ) {
+function rdf_type_contents( $my_post, $indent ) {
    $tag = "dc:type";
    rdf_open_tag( $tag, $indent );
    echo "InteractiveResource";
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_text_contents( $post, $indent ) {
+function rdf_text_contents( $my_post, $indent ) {
    $tag = "collex:text";
    rdf_open_tag( $tag, $indent );
-   echo "XXX TEXT XXX";
+   echo $my_post->guid;
    rdf_close_tag( $tag, 0 );
 }
 
-function rdf_thumbnail_contents( $post, $indent ) {
+function rdf_thumbnail_contents( $my_post, $indent ) {
    $tag = "collex:thumbnail";
    rdf_open_tag( $tag, $indent );
-   echo "XXX THUMBNAIL XXX";
+
+   $thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $my_post->ID ), 'thumbnail' );
+   $thumbURL = $thumb[ '0' ];
+   if( empty( $thumbURL ) ) {
+      $thumbURL = "bla bla bla";
+   }
+
+   echo $thumbURL;
    rdf_close_tag( $tag, 0 );
 }
 
