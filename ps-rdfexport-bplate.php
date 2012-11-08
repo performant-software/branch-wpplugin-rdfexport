@@ -17,7 +17,7 @@ public function uninstall_rdfexport( ) {
 }
 
 public function rdfexport_add_settings_page( ) {
-   add_submenu_page( 'tools.php', 'RDF Export', 'RDF Export', 'manage_options', 'ps-rdfexport-slug', array( $this, 'rdfexport_page' ) );
+   add_submenu_page( 'tools.php', 'Export to RDF', 'Export to RDF', 'manage_options', 'ps-rdfexport-slug', array( $this, 'rdfexport_page' ) );
 }
 
 public function rdfexport_page( ) {
@@ -25,10 +25,11 @@ public function rdfexport_page( ) {
 <div class="wrap">
 <form method="get" id="rdfexport_form">
   <input type="hidden" name="rdfdownload" value="true">
-  <h3>RDF Export</h3>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque commodo, nunc eu suscipit egestas, risus lectus pellentesque leo, ac pretium eros eros id turpis. Sed purus turpis, varius non tempor eget, tristique vitae risus. Sed dui enim, mattis vitae pulvinar vel, aliquam nec neque. Curabitur feugiat cursus arcu, vel molestie mi dignissim id. Nullam auctor tincidunt purus quis auctor.</p>
+  <h2>Export to RDF</h2>
+  <p>When you click the button below WordPress will create an XML file for you to save to your computer.</p>
+  <p>This format is called RDF and is designed to be imported into the NINES system.</p>
   <p class="submit">
-     <input type="submit" name="submit" class="button-primary" value="Export to RDF" />
+     <input type="submit" name="submit" class="button-secondary" value="Export to RDF" />
   </p>
 </form>
 </div>
