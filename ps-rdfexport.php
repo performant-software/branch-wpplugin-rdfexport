@@ -147,7 +147,7 @@ function rdf_see_also_contents( $my_post, $indent ) {
 function rdf_title_contents( $my_post, $indent ) {
    $tag = "dc:title";
    rdf_open_tag( $tag, $indent );
-   echo $my_post->post_title;
+   echo rdf_remove_title_tags( $my_post->post_title );
    rdf_close_tag( $tag, 0 );
 }
 
@@ -291,8 +291,8 @@ function rdf_newline( ) {
    echo "\n";
 }
 
-function basic_log( $msg ) {
-   file_put_contents( "/tmp/debug.log", "$msg\n" );
+function rdf_remove_title_tags( $title ) {
+   return( strip_tags( $title ) );
 }
 
 ?>
