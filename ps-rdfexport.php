@@ -224,11 +224,13 @@ function rdf_thumbnail_contents( $my_post, $indent ) {
 
    $thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $my_post->ID ), 'thumbnail' );
    $thumbURL = $thumb[ '0' ];
-   if( empty( $thumbURL ) == false ) {
-      $embed = "rdf:resource=" . "\"" . $thumbURL . "\"";
-      rdf_open_tag( $tag, $indent, $embed );
-      rdf_close_tag( $tag, 0 );
+   if( empty( $thumbURL ) == true ) {
+      $thumbURL = site_url( ) . "/wp-content/uploads/2012/01/branch_logo_brown.png";
    }
+
+   $embed = "rdf:resource=" . "\"" . $thumbURL . "\"";
+   rdf_open_tag( $tag, $indent, $embed );
+   rdf_close_tag( $tag, 0 );
 }
 
 function rdf_header_contents( ) {
