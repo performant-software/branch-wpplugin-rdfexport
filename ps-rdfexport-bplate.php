@@ -1,6 +1,6 @@
 <?php
 /*
- *
+ * All the boilerplate to install and uninstall the Wordpress menu item and render the basic export page.
  *
  */
 
