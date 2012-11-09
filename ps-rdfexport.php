@@ -29,7 +29,8 @@ function rdf_export( ) {
    rdf_header_contents( );
 
    // Construct query args (all ps_articles) and issue the query...
-   $qargs = array( 'post_type' => 'ps_articles',
+   $qargs = array( 'post_status' => 'publish',
+                   'post_type' => 'ps_articles',
                    'posts_per_page' => -1 );
    $query= new WP_Query( $qargs );
 
